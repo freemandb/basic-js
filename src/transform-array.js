@@ -13,10 +13,49 @@ const { NotImplementedError } = require('../extensions/index.js');
  * transform([1, 2, 3, '--discard-prev', 4, 5]) => [1, 2, 4, 5]
  * 
  */
-function transform(/* arr */) {
-  throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
+
+function transform(arr) {
+  const comandsArr = ['--double-next', '--double-prev', '--discard-prev', '--discard-next']
+
+  if (!Array.isArray(arr)) {
+    throw new Error("'arr' parameter must be an instance of the Array!");
+  }
+  let resArr = [];
+  let lastDeletedInd = -1;
+  for (let ind = 0; ind < arr.length; ind++) {
+    let el = arr[ind];
+    if (comandsArr.indexOf(arr[ind] ) == -1) {
+      resArr.push(arr[ind]);
+    } else {
+      if (el === '--double-next') {
+        if (ind < arr.length - 1 && comandsArr.indexOf(arr[ind + 1] == -1)) {
+          resArr.push(arr[ind + 1]);
+        }
+      } 
+      if (el === '--double-prev') {
+        if (ind > 0 && comandsArr.indexOf(arr[ind - 1] == -1) && lastDeletedInd != ind - 1) {
+          resArr.push(arr[ind - 1]);
+        }
+        
+      }
+      if (el === '--discard-prev') {
+        if (ind > 0 && comandsArr.indexOf(arr[ind - 1] == -1) && lastDeletedInd != ind - 1) {
+          resArr.pop();
+        }
+      }
+      if (el === '--discard-next') {
+        if (ind < arr.length - 1 && comandsArr.indexOf(arr[ind - 1] == -1)) {
+          lastDeletedInd = ++ind;
+        }
+        
+      }
+    }
+    
+  }
+  return resArr;
 }
+
+transform([1, 2, 3, '--discard-next', 1337, '--double-prev', 4, 5])
 
 module.exports = {
   transform
